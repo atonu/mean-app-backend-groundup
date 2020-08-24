@@ -2,8 +2,7 @@ require('./config/config');
 require('./models/db');
 const express = require('express');
 const bodyparser = require('body-parser');
-var userController = require('./controllers/users.controller');
-
+let userController = require('./controllers/users.controller');
 
 var app = new express();
 app.use(bodyparser.json());
