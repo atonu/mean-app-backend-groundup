@@ -1,6 +1,6 @@
 {
   "development": {
-    "PORT": 3000,
+    "PORT": 1234,
     "MONGODB_URL": "mongodb://localhost:27017/authDB",
     "ORIGIN": "http://localhost:4200"
   },
