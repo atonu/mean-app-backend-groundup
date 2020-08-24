@@ -1,11 +1,12 @@
 require('./models/db');
+require('./config/config');
 const express = require('express');
 const bodyparser = require('body-parser');
 
 
 var app = new express();
 app.use(bodyparser.json());
-app.listen(3000,(error)=>{
+app.listen(process.env.PORT,(error)=>{
     if (!error){
         console.log('Listening to 3000')
     } else {
