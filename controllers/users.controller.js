@@ -27,5 +27,16 @@ router.get('/getall', (req, res) => {
     });
 });
 
+router.post('/login',(req,res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+    User.findByCredentials(email,password).then((user)=>{
+        console.log(user);
+        res.send(user);
+    }).catch((err)=> {
+        console.log(err);
+    })
+});
+
 
 module.exports = router;
