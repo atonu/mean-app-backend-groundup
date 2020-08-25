@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 
 });
 
-userSchema.method.toJSON = () => {
+userSchema.methods.toJSON = () => {
     const user = this;
     const userObject = user.toObject();
     return _.omit(userObject, ['password', 'sessions']);
@@ -71,7 +71,9 @@ userSchema.statics.findByCredentials = (email, password) => {
     })
 };
 
-userSchema.method.createSession = () => {
+
+userSchema.methods.createSession = function () {
+
     let user = this;
     return user.generateRefreshToken().then((refreshToken) => {
         return saveSessionToDB(user, refreshToken);
@@ -89,7 +91,7 @@ let saveSessionToDB = (user, refreshToken) => {
         user.save().then(() => {
             return resolve(refreshToken);
         }).catch((e) => {
-            console.log(e);
+            console.log("mongo save error: "+e);
         })
     })
 };
@@ -106,7 +108,7 @@ userSchema.methods.generateRefreshToken = () => {
     return new Promise((resolve, reject) => {
         crypto.randomBytes(64, (err, buf) => {
             if (!err) {
-                let token = but.toString('Hex');
+                let token = buf.toString('hex');
                 return resolve(token); //check
             } else {
                 return reject(err);

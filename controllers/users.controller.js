@@ -11,12 +11,10 @@ router.post('/register', (req, res) => {
     user.save().then(() => {
         return user.createSession();
     }).then((refreshToken) => {
-
-
-        res.send(response);
+        res.send(refreshToken);
     })
         .catch((err) => {
-            console.log('error', JSON.stringify(err, undefined, 2));
+            console.log('errorz', JSON.stringify(err, undefined, 2));
             res.send(JSON.stringify(err, undefined, 2));
         })
 });
