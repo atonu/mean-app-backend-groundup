@@ -36,6 +36,7 @@ router.post('/login', (req, res) => {
     User.findByCredentials(email, password).then((user) => {
         res.send(user);
     }).catch((err) => {
+        res.send(err);
         console.log(err);
     })
 });

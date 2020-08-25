@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 
 });
 
-userSchema.methods.toJSON = () => {
+userSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
     return _.omit(userObject, ['password', 'sessions']);
@@ -54,17 +54,20 @@ userSchema.pre('save', function (next) {
 
 });
 
-userSchema.statics.findByCredentials = (email, password) => {
+userSchema.statics.findByCredentials = function (email, password) {
+    let User = this;
     return User.findOne({email}).then((user) => {
         if (!user) {
             return Promise.reject();
         }
         return new Promise((resolve, reject) => {
             bcrypt.compare(password, user.password, (err, res) => {
+                console.log("chet" + err);
+                console.log("baal" + res);
                 if (res) {
                     resolve(user);
                 } else {
-                    reject(err);
+                    reject("Auth Failed");
                 }
             });
         })
@@ -85,18 +88,18 @@ userSchema.methods.createSession = function () {
 };
 
 /*HELPER METHODS*/
-let saveSessionToDB = (user, refreshToken) => {
+let saveSessionToDB = function (user, refreshToken) {
     return new Promise((resolve, reject) => {
         user.sessions.push({'token': refreshToken, 'expiresAt': generateRefreshTokenExpiryTime()});
         user.save().then(() => {
             return resolve(refreshToken);
         }).catch((e) => {
-            console.log("mongo save error: "+e);
+            console.log("mongo save error: " + e);
         })
     })
 };
 
-let generateRefreshTokenExpiryTime = () => {
+let generateRefreshTokenExpiryTime = function () {
     let dayLimit = "10";
     let secondsLimit = ((dayLimit * 24) * 60) * 60;
     return ((Date.now() / 100) + secondsLimit);
@@ -104,7 +107,7 @@ let generateRefreshTokenExpiryTime = () => {
 
 
 //ynostatic
-userSchema.methods.generateRefreshToken = () => {
+userSchema.methods.generateRefreshToken = function () {
     return new Promise((resolve, reject) => {
         crypto.randomBytes(64, (err, buf) => {
             if (!err) {
