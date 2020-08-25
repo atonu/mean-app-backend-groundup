@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 let bcrypt = require('bcryptjs');
 let crypto = require('crypto');
+let jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -27,6 +28,8 @@ const userSchema = new mongoose.Schema({
     }]
 
 });
+
+secretKey = "iuasgd789asd87aosdasdo87asodgasdrohg";
 
 userSchema.methods.toJSON = function () {
     const user = this;
@@ -87,6 +90,33 @@ userSchema.methods.createSession = function () {
     })
 };
 
+//ynostatic
+userSchema.methods.generateRefreshToken = function () {
+    return new Promise((resolve, reject) => {
+        crypto.randomBytes(64, (err, buf) => {
+            if (!err) {
+                let token = buf.toString('hex');
+                return resolve(token); //check
+            } else {
+                return reject(err);
+            }
+        })
+    })
+};
+
+userSchema.methods.generateAccessToken = function () {
+    let user = this;
+    return new Promise(((resolve, reject) => {
+        jwt.sign({_id: user._id.toHexString()}, secretKey, {expiresIn: "15m"}, (err, token) => {
+            if (!err) {
+                return resolve(token)
+            } else {
+                reject(err);
+            }
+        })
+    }))
+};
+
 /*HELPER METHODS*/
 let saveSessionToDB = function (user, refreshToken) {
     return new Promise((resolve, reject) => {
@@ -105,20 +135,10 @@ let generateRefreshTokenExpiryTime = function () {
     return ((Date.now() / 100) + secondsLimit);
 };
 
-
-//ynostatic
-userSchema.methods.generateRefreshToken = function () {
-    return new Promise((resolve, reject) => {
-        crypto.randomBytes(64, (err, buf) => {
-            if (!err) {
-                let token = buf.toString('hex');
-                return resolve(token); //check
-            } else {
-                return reject(err);
-            }
-        })
-    })
+let getSecretKey = function () {
+    return secretKey;
 };
+
 
 const User = mongoose.model('User', userSchema);
 module.exports = {User};

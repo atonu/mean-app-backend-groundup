@@ -11,10 +11,19 @@ router.post('/register', (req, res) => {
     user.save().then(() => {
         return user.createSession();
     }).then((refreshToken) => {
-        res.send(refreshToken);
+        return user.generateAccessToken().then((accessToken) => {
+            return ({refreshToken, accessToken});
+        }).catch((err)=>{
+            res.send(JSON.stringify(err, undefined, 2));
+        });
+    }).then((authToken) => {
+        res
+            .header('x-access-token', authToken.accessToken)
+            .header('x-refresh-token', authToken.refreshToken)
+            .send(user);
     })
         .catch((err) => {
-            console.log('errorz', JSON.stringify(err, undefined, 2));
+            console.log('error', JSON.stringify(err, undefined, 2));
             res.send(JSON.stringify(err, undefined, 2));
         })
 });
