@@ -13,7 +13,7 @@ router.post('/register', (req, res) => {
     }).then((refreshToken) => {
         return user.generateAccessToken().then((accessToken) => {
             return ({refreshToken, accessToken});
-        }).catch((err)=>{
+        }).catch((err) => {
             res.send(JSON.stringify(err, undefined, 2));
         });
     }).then((authToken) => {
@@ -43,7 +43,16 @@ router.post('/login', (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     User.findByCredentials(email, password).then((user) => {
-        res.send(user);
+        return user.createSession().then((refreshToken) => {
+            return user.generateAccessToken().then((accessToken) => {
+                return {refreshToken, accessToken};
+            });
+        }).then((authToken) => {
+            res
+                .header("x-refresh-token", authToken.refreshToken)
+                .header("x-access-token", authToken.accessToken)
+                .send(user);
+        })
     }).catch((err) => {
         res.send(err);
         console.log(err);
