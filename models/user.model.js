@@ -77,7 +77,6 @@ userSchema.statics.findByCredentials = function (email, password) {
 
 
 userSchema.methods.createSession = function () {
-
     let user = this;
     return user.generateRefreshToken().then((refreshToken) => {
         return saveSessionToDB(user, refreshToken);
@@ -92,9 +91,9 @@ userSchema.methods.generateRefreshToken = function () {
         crypto.randomBytes(64, (err, buf) => {
             if (!err) {
                 let token = buf.toString('hex');
-                return resolve(token); //check
+                resolve(token); //check
             } else {
-                return reject(err);
+                reject(err);
             }
         })
     })
@@ -131,7 +130,7 @@ let generateRefreshTokenExpiryTime = function () {
     return ((Date.now() / 100) + secondsLimit);
 };
 
-let getSecretKey = function () {
+userSchema.statics.getSecretKey = function () {
     return secretKey;
 };
 

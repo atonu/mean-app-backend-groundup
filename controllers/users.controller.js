@@ -1,6 +1,20 @@
 const express = require('express');
 var router = express.Router();
 const {User} = require('../models/user.model');
+const jwt = require('jsonwebtoken');
+
+/*MIDDLEWARE*/
+let authenticate = function(req,res,next){
+    let token = req.header("x-access-token");
+    jwt.verify(token, User.getSecretKey(), (err,decoded)=> {
+        if (err){
+            res.status(401)
+                .send(err);
+        }
+        req.user_id = decoded._id;
+        next();
+    });
+};
 
 /*REGISTRATION*/
 router.post('/register', (req, res) => {
@@ -29,7 +43,7 @@ router.post('/register', (req, res) => {
 });
 
 /*Get-ALL-USERS*/
-router.get('/getall', (req, res) => {
+router.get('/getall', authenticate, (req, res) => {
     User.find().then((users) => {
         res.send(users);
     }).catch((err) => {
@@ -58,6 +72,5 @@ router.post('/login', (req, res) => {
         console.log(err);
     })
 });
-
 
 module.exports = router;
