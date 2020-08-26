@@ -65,8 +65,6 @@ userSchema.statics.findByCredentials = function (email, password) {
         }
         return new Promise((resolve, reject) => {
             bcrypt.compare(password, user.password, (err, res) => {
-                console.log("chet" + err);
-                console.log("baal" + res);
                 if (res) {
                     resolve(user);
                 } else {
@@ -83,8 +81,6 @@ userSchema.methods.createSession = function () {
     let user = this;
     return user.generateRefreshToken().then((refreshToken) => {
         return saveSessionToDB(user, refreshToken);
-    }).then((refreshToken) => {
-        return refreshToken;
     }).catch((e) => {
         return Promise.reject('Failed to save session: ' + e);
     })
@@ -122,7 +118,7 @@ let saveSessionToDB = function (user, refreshToken) {
     return new Promise((resolve, reject) => {
         user.sessions.push({'token': refreshToken, 'expiresAt': generateRefreshTokenExpiryTime()});
         user.save().then(() => {
-            return resolve(refreshToken);
+            resolve(refreshToken);
         }).catch((e) => {
             console.log("mongo save error: " + e);
         })
