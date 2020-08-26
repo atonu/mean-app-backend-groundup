@@ -102,7 +102,7 @@ userSchema.methods.generateRefreshToken = function () {
 userSchema.methods.generateAccessToken = function () {
     let user = this;
     return new Promise(((resolve, reject) => {
-        jwt.sign({_id: user._id.toHexString()}, secretKey, {expiresIn: "15m"}, (err, token) => {
+        jwt.sign({_id: user._id.toHexString()}, secretKey, {expiresIn: "30s"}, (err, token) => {
             if (!err) {
                 return resolve(token)
             } else {
@@ -110,6 +110,14 @@ userSchema.methods.generateAccessToken = function () {
             }
         })
     }))
+};
+
+userSchema.statics.findUserByIdAndToken = function (id, refreshToken) {
+    const user = this;
+    return user.findOne({
+        _id:id,
+        'sessions.token': refreshToken
+    });
 };
 
 /*HELPER METHODS*/
