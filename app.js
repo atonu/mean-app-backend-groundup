@@ -4,12 +4,13 @@ const express = require('express');
 const bodyparser = require('body-parser');
 let userController = require('./controllers/users.controller');
 let employeeController = require('./controllers/employeeController');
+let cors = require('cors');
 
 var app = new express();
 app.use(bodyparser.json());
 app.use('/auth', userController);
-app.use('/employee', employeeController);
-
+app.use('/employees', employeeController);
+app.use(cors({origin: process.env.ORIGIN}));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD, OPTIONS");

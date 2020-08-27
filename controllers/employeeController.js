@@ -1,12 +1,12 @@
 const express = require('express');
 const ObjectId = require('mongoose').Types.ObjectId;
 var router = express.Router();
-// const cors = require('cors');
+const cors = require('cors');
 
 var {Employee} = require('../models/employee');
 
 
-router.get('/', (req, res) => {
+router.get('/', cors(), (req, res) => {
     Employee.find((err, docs) => {
         if (!err) {
             res.send(docs);
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id',cors(), (req, res) => {
 
     if (!ObjectId.isValid(req.param.id)) {
         console.log(`Invalid id ${req.params.id}`);
@@ -32,7 +32,7 @@ router.get('/:id', (req, res) => {
     })
 });
 
-router.post('/', (req, res) => {
+router.post('/',cors(), (req, res) => {
     var emp = new Employee({
         name: req.body.name,
         position: req.body.position,
@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id',cors(), (req, res) => {
     if (!ObjectId.isValid(req.param.id)) {
         console.log(`Invalid id ${req.params.id}`);
         // return res.status(400).send(`No record with ID: ${req.params.id}`);
@@ -69,7 +69,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id',cors(), (req, res) => {
     if (!ObjectId.isValid(req.param.id)) {
         console.log(`Invalid id ${req.params.id}`);
         // return res.status(400).send(`No record with ID: ${req.params.id}`);
