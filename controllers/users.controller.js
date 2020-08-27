@@ -2,6 +2,21 @@ const express = require('express');
 var router = express.Router();
 const {User} = require('../models/user.model');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
+
+
+router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id");
+
+    res.header(
+        'Access-Control-Expose-Headers',
+        'x-access-token, x-refresh-token'
+    );
+    next();
+});
+
 
 /*MIDDLEWARE*/
 let authenticate = function (req, res, next) {
@@ -52,7 +67,7 @@ let verifySession = function (req, res, next) {
 };
 
 /*REGISTRATION*/
-router.post('/register', (req, res) => {
+router.post('/register',cors(), (req, res) => {
     let user = new User({
         email: req.body.email,
         password: req.body.password
@@ -78,7 +93,7 @@ router.post('/register', (req, res) => {
 });
 
 /*Get-ALL-USERS*/
-router.get('/getall', authenticate, (req, res) => {
+router.get('/getall',cors(), authenticate, (req, res) => {
     User.find().then((users) => {
         res.send(users);
     }).catch((err) => {
@@ -88,10 +103,12 @@ router.get('/getall', authenticate, (req, res) => {
 });
 
 /*LOGIN*/
-router.post('/login', (req, res) => {
+router.post('/login', cors(), (req, res) => {
+    console.log(req);
     let email = req.body.email;
     let password = req.body.password;
     User.findByCredentials(email, password).then((user) => {
+    console.log(user);
         return user.createSession().then((refreshToken) => {
             return user.generateAccessToken().then((accessToken) => {
                 return {refreshToken, accessToken};
@@ -108,7 +125,7 @@ router.post('/login', (req, res) => {
     })
 });
 
-router.get('/getAccessToken', verifySession, (req, res) => {
+router.get('/getAccessToken', verifySession,cors(), (req, res) => {
     req.userObject.generateAccessToken().then((accessToken) => {
         res
             .header('x-access-token', accessToken)
