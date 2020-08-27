@@ -3,10 +3,12 @@ require('./models/db');
 const express = require('express');
 const bodyparser = require('body-parser');
 let userController = require('./controllers/users.controller');
+let employeeController = require('./controllers/employeeController');
 
 var app = new express();
 app.use(bodyparser.json());
 app.use('/auth', userController);
+app.use('/employee', employeeController);
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
