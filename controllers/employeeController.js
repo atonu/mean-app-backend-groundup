@@ -2,11 +2,23 @@ const express = require('express');
 const ObjectId = require('mongoose').Types.ObjectId;
 var router = express.Router();
 const cors = require('cors');
+let middleware = require('./Middlewares');
 
 var {Employee} = require('../models/employee');
 
+router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id");
 
-router.get('/', cors(), (req, res) => {
+    res.header(
+        'Access-Control-Expose-Headers',
+        'x-access-token, x-refresh-token'
+    );
+    next();
+});
+
+router.get('/',middleware.authenticate,cors(), (req, res) => {
     Employee.find((err, docs) => {
         if (!err) {
             res.send(docs);
