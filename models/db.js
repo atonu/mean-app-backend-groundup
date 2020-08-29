@@ -5,8 +5,4 @@ mongoose.connect('mongodb+srv://atonu:atonumongo@cluster0.9xqxy.mongodb.net/MEAN
     console.log("error" + JSON.stringify(e, undefined, 2));
 });
 
-
 module.exports = {mongoose};
-
-
-1
