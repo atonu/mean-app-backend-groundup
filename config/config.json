@@ -1,12 +1,12 @@
 {
   "development": {
     "PORT": 1234,
-    "MONGODB_URL": "mongodb://localhost:27017/authDB",
+    "MONGODB_URL": "mongodb+srv://atonu:atonumongo@cluster0.9xqxy.mongodb.net/MEAN?retryWrites=true&w=majority",
     "ORIGIN": "http://localhost:4200"
   },
   "production": {
     "PORT": 3000,
-    "MONGODB_URL": "mongodb://localhost:27017/authDB",
+    "MONGODB_URL": "mongodb+srv://atonu:atonumongo@cluster0.9xqxy.mongodb.net/MEAN?retryWrites=true&w=majority",
     "ORIGIN": "http://localhost:4200"
   }
 }

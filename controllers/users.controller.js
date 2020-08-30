@@ -70,7 +70,9 @@ let verifySession = function (req, res, next) {
 router.post('/register',cors(), (req, res) => {
     let user = new User({
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        name: req.body.name,
+        phone: req.body.phone
     });
     user.save().then(() => {
         return user.createSession();
@@ -88,7 +90,9 @@ router.post('/register',cors(), (req, res) => {
     })
         .catch((err) => {
             console.log('error', JSON.stringify(err, undefined, 2));
-            res.send(JSON.stringify(err, undefined, 2));
+            res
+                .status(500)
+                .send(JSON.stringify(err, undefined, 2));
         })
 });
 
