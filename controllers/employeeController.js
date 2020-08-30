@@ -96,4 +96,17 @@ router.delete('/:id',cors(), (req, res) => {
     });
 });
 
+module.exports.saveEmployee = function (name) {
+    let emp = new Employee({
+        name: name
+    });
+    emp.save().then((doc) => {
+        console.log('------------------------------------------------')
+        console.log(doc);
+    }).catch((err) => {
+        console.log('------------------------------------------------')
+        console.log(err);
+    });
+};
+
 module.exports = router;

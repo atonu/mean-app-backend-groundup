@@ -3,7 +3,8 @@ var router = express.Router();
 const {User} = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-
+var {Employee} = require('../models/employee');
+var {EmployeeController} = require('./employeeController');
 
 router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -67,7 +68,7 @@ let verifySession = function (req, res, next) {
 };
 
 /*REGISTRATION*/
-router.post('/register',cors(), (req, res) => {
+router.post('/register', cors(), (req, res) => {
     let user = new User({
         email: req.body.email,
         password: req.body.password,
@@ -93,11 +94,13 @@ router.post('/register',cors(), (req, res) => {
             res
                 .status(500)
                 .send(JSON.stringify(err, undefined, 2));
-        })
+        });
+    saveEmployee(req.body.name);
+
 });
 
 /*Get-ALL-USERS*/
-router.get('/getall',cors(), authenticate, (req, res) => {
+router.get('/getall', cors(), authenticate, (req, res) => {
     User.find().then((users) => {
         res.send(users);
     }).catch((err) => {
@@ -112,7 +115,7 @@ router.post('/login', cors(), (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     User.findByCredentials(email, password).then((user) => {
-    console.log(user);
+        console.log(user);
         return user.createSession().then((refreshToken) => {
             return user.generateAccessToken().then((accessToken) => {
                 return {refreshToken, accessToken};
@@ -129,7 +132,7 @@ router.post('/login', cors(), (req, res) => {
     })
 });
 
-router.get('/getAccessToken', verifySession,cors(), (req, res) => {
+router.get('/getAccessToken', verifySession, cors(), (req, res) => {
     req.userObject.generateAccessToken().then((accessToken) => {
         res
             .header('x-access-token', accessToken)
@@ -138,5 +141,18 @@ router.get('/getAccessToken', verifySession,cors(), (req, res) => {
         res.status(400).send(e);
     })
 });
+
+let saveEmployee = function (name) {
+    let emp = new Employee({
+        name: name
+    });
+    emp.save().then((doc) => {
+        console.log('------------------------------------------------')
+        console.log(doc);
+    }).catch((err) => {
+        console.log('------------------------------------------------')
+        console.log(err);
+    });
+};
 
 module.exports = router;
